@@ -336,6 +336,9 @@ Example:
 	}
 ```
 
+Per default you can only save one translation in the default locale. The default translation is saved as the attribute on the model and as translation in the translations table. 
+To batch save translations the translatable attribute has to be an array of the translated versions, keyed by the lang code. Empty translations won't be saved or remove previous translations. This prevents ugly surprises when translations are empty strings oder translation codes. After the translations are saved the attribute is set back to the default locale translation. 
+
 ## Uri localization
 
 You may use Waavi\Translation\Middleware\TranslationMiddleware to make sure all of your urls are properly localized. The TranslationMiddleware will only redirect GET requests that do not have a locale in them.
