@@ -350,12 +350,10 @@ class TranslationRepository extends Repository
     }
 
     /**
-     *  Find a translation per namespace, group and item values
+     *  Find a translation per code and locale
      *
      *  @param  string  $locale
-     *  @param  string  $namespace
-     *  @param  string  $group
-     *  @param  string  $item
+     *  @param  string  $code
      *  @return Translation
      */
     public function findByLangCode($locale, $code)
@@ -376,6 +374,18 @@ class TranslationRepository extends Repository
     public function findByCode($locale, $namespace, $group, $item)
     {
         return $this->model->whereLocale($locale)->whereNamespace($namespace)->whereGroup($group)->whereItem($item)->first();
+    }
+
+    /**
+     *  Finds all translations for a code
+     *
+     *  @param  string  $code
+     *  @return Translation
+     */
+    public function findAllByCode($code)
+    {
+        list($namespace, $group, $item) = $this->parseCode($code);
+        return $this->model->whereNamespace($namespace)->whereGroup($group)->whereItem($item)->get();
     }
 
     /**
