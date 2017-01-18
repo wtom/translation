@@ -114,12 +114,13 @@ trait Translatable
      *  Return the translation related to a translatable attribute.
      *
      *  @param  string $attribute
+     *  @param  string $locale
      *  @return Translation
      */
-    public function translate($attribute)
+    public function translate($attribute, $locale = null)
     {
         $translationCode = $this->translationCodeFor($attribute);
-        $translation     = $translationCode ? trans($translationCode) : false;
+        $translation     = $translationCode ? trans($translationCode, [], null, $locale) : false;
         return $translation ?: parent::getAttribute($attribute);
     }
 
@@ -152,5 +153,22 @@ trait Translatable
     public function translatableAttributes()
     {
         return $this->translatableAttributes;
+    }
+
+    /**
+     *  Return the keys for all translatable attributes for all locales
+     *
+     *  @param array $locales
+     *  @return array
+     */
+    public function translatableAttributesForLocales($locales)
+    {
+        $keys = [];
+        foreach ($this->translatableAttributes as $attribute){
+            foreach ($locales as $locale){
+                $keys[] = "{$attribute}_translation_{$locale->locale}";
+            }
+        }
+        return $keys;
     }
 }

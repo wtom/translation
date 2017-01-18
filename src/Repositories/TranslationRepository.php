@@ -122,6 +122,24 @@ class TranslationRepository extends Repository
     }
 
     /**
+     *  Insert or Update entry by translation code for the given locale.
+     *
+     *  @param  string  $locale
+     *  @param  string  $code
+     *  @param  string  $text
+     *  @return boolean
+     */
+    public function updateByCode($locale, $code, $text)
+    {
+        list($namespace, $group, $item) = $this->parseCode($code);
+        $translation                    = $this->model->whereLocale($locale)->whereNamespace($namespace)->whereGroup($group)->whereItem($item)->first();
+        if (!$translation) {
+            return $this->create(compact('locale', 'namespace', 'group', 'item', 'text'));
+        }
+        return $this->update($translation->id, $text);
+    }
+
+    /**
      *  Delete a translation. If the translation is of the default language, delete all translations with the same namespace, group and item
      *
      *  @param  integer $id
@@ -154,7 +172,20 @@ class TranslationRepository extends Repository
     }
 
     /**
-     *  Loads a localization array from a localization file into the databas.
+     *  Delete all entries by code
+     *
+     *  @param  string  $code
+     *  @param  string  $locale
+     *  @return boolean
+     */
+    public function deleteByCodeAndLocale($code, $locale)
+    {
+        list($namespace, $group, $item) = $this->parseCode($code);
+        $this->model->whereNamespace($namespace)->whereGroup($group)->whereItem($item)->whereLocale($locale)->delete();
+    }
+
+    /**
+     *  Loads a localization array from a localization file into the database.
      *
      *  @param  array   $lines
      *  @param  string  $locale
